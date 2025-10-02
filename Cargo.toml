@@ -1,0 +1,5 @@
+[workspace]
+members = [
+    "src/ex6_backend"
+]
+resolver = "2"

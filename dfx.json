@@ -1,0 +1,17 @@
+{
+  "canisters": {
+    "ex6_backend": {
+      "candid": "src/ex6_backend/ex6_backend.did",
+      "package": "ex6_backend",
+      "type": "rust"
+    }
+  },
+  "defaults": {
+    "build": {
+      "args": "",
+      "packtool": ""
+    }
+  },
+  "output_env_file": ".env",
+  "version": 1
+}
