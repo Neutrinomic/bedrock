@@ -1,0 +1,12 @@
+[package]
+name = "staging_memory"
+version = "0.1.0"
+edition = "2021"
+description = "Layered overlay transactions (BTree, struct, and log) for staged state management."
+license = "MIT OR Apache-2.0"
+
+[lib]
+name = "staging_memory"
+path = "src/lib.rs"
+
+[dependencies]

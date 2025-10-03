@@ -1,0 +1,16 @@
+[package]
+name = "appchain"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+app = { path = "../app" }
+staging_memory = { path = "../staging_memory" }
+candid = "0.10"
+ic-cdk = "0.17"
+ic-stable-structures = "0.6"
+serde = { version = "1", features = ["derive"] }
+

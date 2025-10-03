@@ -1,9 +1,9 @@
 {
   "canisters": {
-    "ex6_backend": {
-      "candid": "src/ex6_backend/ex6_backend.did",
-      "package": "ex6_backend",
-      "type": "rust"
+    "appchain": {
+      "type": "rust",
+      "package": "appchain",
+      "candid": "src/ic/appchain.did"
     }
   },
   "defaults": {

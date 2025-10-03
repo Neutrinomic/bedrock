@@ -1,5 +1,8 @@
 [workspace]
 members = [
-    "src/ex6_backend"
+    "src/app",
+    "src/staging_memory",
+    "src/client",
+    "src/ic"
 ]
 resolver = "2"
