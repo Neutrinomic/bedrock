@@ -2,8 +2,7 @@ use crate::store::StoreGeneric;
 use crate::types::{
     actions::{Action, ApplyStatus, LedgerAction},
     address::Address,
-    block::Block,
-    events::LedgerEvent,
+    events::{Event, LedgerEvent},
     meta::Meta,
 };
 use staging_memory::traits::{CellStore, LogStore, MapStore};
@@ -15,16 +14,17 @@ pub fn reduce<A, B, C, D>(
 where
     A: MapStore<Address, u128>,
     B: CellStore<Meta>,
-    C: LogStore<LedgerEvent>,
-    D: LogStore<Block>,
+    C: LogStore<Event>,
+    D: LogStore<Vec<u8>>,
 {
     match action {
         Action::Ledger(LedgerAction::Coinbase { to, amount }) => {
             let cur = store.accounts.get(to).unwrap_or(0);
             store.accounts.insert(to.clone(), cur.saturating_add(*amount));
-            store
-                .events
-                .append(LedgerEvent::Coinbase { to: to.clone(), amount: *amount });
+            store.events.append(Event::Ledger(LedgerEvent::Coinbase {
+                to: to.clone(),
+                amount: *amount,
+            }));
             ApplyStatus::Ok
         }
         Action::Ledger(LedgerAction::Transfer { from, to, amount }) => {
@@ -46,9 +46,11 @@ where
             store
                 .accounts
                 .insert(to.clone(), to_bal.saturating_add(*amount));
-            store
-                .events
-                .append(LedgerEvent::Transfer { from: from.clone(), to: to.clone(), amount: *amount });
+            store.events.append(Event::Ledger(LedgerEvent::Transfer {
+                from: from.clone(),
+                to: to.clone(),
+                amount: *amount,
+            }));
             ApplyStatus::Ok
         }
         _ => ApplyStatus::Pass { reason: "skipped by ledger".into() },

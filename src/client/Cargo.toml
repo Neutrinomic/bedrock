@@ -9,3 +9,7 @@ staging_memory = { path = "../staging_memory" }
 sled = "0.34"
 candid = "0.10"
 serde = { version = "1", features = ["derive"] }
+ic-agent = { version = "0.36", default-features = false, features = ["reqwest"] }
+tokio = { version = "1", features = ["rt-multi-thread", "macros", "time"] }
+anyhow = "1"
+dotenvy = "0.15"

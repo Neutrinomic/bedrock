@@ -1,4 +1,4 @@
-use app::types::{address::Address, block::Block, events::LedgerEvent, meta::Meta};
+use app::types::{address::Address, block::Block, events::Event, meta::Meta};
 use staging_memory::traits::{CellStore, LogStore, MapStore};
 
 use ic_stable_structures::memory_manager::{MemoryId, MemoryManager, VirtualMemory};
@@ -69,16 +69,22 @@ impl CellStore<Meta> for StableCellBackend {
     fn set(&mut self, v: Meta) {
         let _ = self.inner.set(v);
     }
+
+    fn clear(&mut self) {
+        let _ = self.inner.set(Meta::default());
+    }
 }
 
 pub struct StableLogBackend<T: Storable> {
     inner: StableLog<T, Memory, Memory>,
+    index_mem: Memory,
+    data_mem: Memory,
 }
 
 impl<T: Storable> StableLogBackend<T> {
     pub fn new(index_mem: Memory, data_mem: Memory) -> Self {
-        let inner = StableLog::init(index_mem, data_mem).expect("init stable log");
-        Self { inner }
+        let inner = StableLog::init(index_mem.clone(), data_mem.clone()).expect("init stable log");
+        Self { inner, index_mem, data_mem }
     }
 
     pub fn from_ids(index_id: u8, data_id: u8) -> Self {
@@ -111,13 +117,18 @@ where
             let _ = self.inner.append(&item);
         }
     }
+
+    fn clear(&mut self) {
+        // Reinitialize the log on the same memories
+        self.inner = StableLog::new(self.index_mem.clone(), self.data_mem.clone());
+    }
 }
 
 pub fn make_stable_backends() -> (
     StableMapBackend,
     StableCellBackend,
-    StableLogBackend<LedgerEvent>,
-    StableLogBackend<Block>,
+    StableLogBackend<Event>,
+    StableLogBackend<Vec<u8>>,
 ) {
     (
         StableMapBackend::from_id(0),
@@ -126,4 +137,3 @@ pub fn make_stable_backends() -> (
         StableLogBackend::from_ids(4, 5),
     )
 }
-

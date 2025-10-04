@@ -4,6 +4,7 @@ type ApplyStatus = variant {
   Err : record { error : text };
   Pass : record { reason : text };
 };
+type Event = variant { Meta : MetaEvent; Ledger : LedgerEvent };
 type LedgerAction = variant {
   Coinbase : record { to : blob; amount : nat };
   Transfer : record { to : blob; from : blob; amount : nat };
@@ -16,18 +17,19 @@ type MetaAction = variant {
   SetChainName : record { name : text };
   BumpCounter;
 };
-type Result = variant { Ok; Err : text };
+type MetaEvent = variant {
+  SetChainName : record { name : text };
+  BumpCounter : record { new_counter : nat64 };
+};
 service : {
   apply_block : (vec Action) -> (vec ApplyStatus);
+  clear_all : () -> ();
   events_len : () -> (nat64) query;
   get_balance : (blob) -> (nat) query;
-  get_event : (nat64) -> (opt LedgerEvent) query;
-  ledger_coinbase : (blob, nat) -> ();
-  ledger_transfer : (blob, blob, nat) -> (Result);
-  meta_bump_counter : () -> (nat64);
+  get_event : (nat64) -> (opt Event) query;
   meta_get_chain_name : () -> (opt text) query;
   meta_get_counter : () -> (nat64) query;
-  meta_set_chain_name : (text) -> ();
+  reset_and_replay : () -> ();
   txn_commit_all : () -> ();
   txn_commit_oldest : () -> ();
   txn_commit_top : () -> ();

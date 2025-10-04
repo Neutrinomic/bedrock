@@ -110,6 +110,12 @@ where
     pub fn base_len(&self) -> usize {
         self.base.keys().len()
     }
+
+    pub fn clear_all(&mut self) {
+        self.base.clear();
+        self.overlays.clear();
+        self.overlays.push(Overlay::new());
+    }
 }
 
 pub struct BTreeEffectiveIter<'a, K, V, B>

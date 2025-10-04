@@ -79,4 +79,17 @@ impl<T: Clone, B: LogStore<T>> LogTxn<T, B> {
         }
         None
     }
+
+    pub fn clear(&mut self) {
+        self.base.clear();
+        for layer in &mut self.overlays {
+            layer.clear();
+        }
+    }
+
+    pub fn clear_all(&mut self) {
+        self.clear();
+        self.overlays.clear();
+        self.overlays.push(Vec::new());
+    }
 }

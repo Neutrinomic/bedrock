@@ -43,6 +43,10 @@ where
     fn keys(&self) -> Vec<K> {
         self.inner.keys().cloned().collect()
     }
+
+    fn clear(&mut self) {
+        self.inner.clear();
+    }
 }
 
 #[derive(Debug, Default)]
@@ -72,6 +76,10 @@ where
 
     fn set(&mut self, v: T) {
         self.inner = Some(v);
+    }
+
+    fn clear(&mut self) {
+        self.inner = None;
     }
 }
 
@@ -111,5 +119,8 @@ where
     fn extend<I: IntoIterator<Item = T>>(&mut self, it: I) {
         self.inner.extend(it);
     }
-}
 
+    fn clear(&mut self) {
+        self.inner.clear();
+    }
+}

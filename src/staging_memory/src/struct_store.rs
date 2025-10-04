@@ -76,4 +76,10 @@ impl<T: Clone, B: CellStore<T>> StructTxn<T, B> {
         }
         self.base.get()
     }
+
+    pub fn clear_all(&mut self) {
+        self.base.clear();
+        self.overlays.clear();
+        self.overlays.push(None);
+    }
 }

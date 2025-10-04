@@ -5,8 +5,7 @@ use crate::store::StoreGeneric;
 use crate::types::{
     actions::{Action, ApplyStatus},
     address::Address,
-    block::Block,
-    events::LedgerEvent,
+    events::Event,
     meta::Meta,
 };
 use staging_memory::traits::{CellStore, LogStore, MapStore};
@@ -18,8 +17,8 @@ pub fn reduce_in_order<A, B, C, D>(
 where
     A: MapStore<Address, u128>,
     B: CellStore<Meta>,
-    C: LogStore<LedgerEvent>,
-    D: LogStore<Block>,
+    C: LogStore<Event>,
+    D: LogStore<Vec<u8>>,
 {
     let mut saw_ok = false;
     let mut err: Option<String> = None;

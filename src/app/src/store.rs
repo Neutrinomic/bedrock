@@ -1,28 +1,28 @@
 use staging_memory::{
     btree::BTreeTxn, log::LogTxn, struct_store::StructTxn, traits::{CellStore, LogStore, MapStore}
 };
-use crate::types::{address::Address, block::Block, events::LedgerEvent, meta::Meta};
+use crate::types::{address::Address, block::Block, events::Event, meta::Meta};
 
 #[derive(Debug)]
 pub struct StoreGeneric<A, B, C, D>
 where
     A: MapStore<Address, u128>,
     B: CellStore<Meta>,
-    C: LogStore<LedgerEvent>,
-    D: LogStore<Block>,
+    C: LogStore<Event>,
+    D: LogStore<Vec<u8>>,
 {
     pub accounts: BTreeTxn<Address, u128, A>,
     pub meta: StructTxn<Meta, B>,
-    pub events: LogTxn<LedgerEvent, C>,
-    pub blocks: LogTxn<Block, D>,
+    pub events: LogTxn<Event, C>,
+    pub blocks: LogTxn<Vec<u8>, D>,
 }
 
 impl<A, B, C, D> StoreGeneric<A, B, C, D>
 where
     A: MapStore<Address, u128>,
     B: CellStore<Meta>,
-    C: LogStore<LedgerEvent>,
-    D: LogStore<Block>,
+    C: LogStore<Event>,
+    D: LogStore<Vec<u8>>,
 {
     pub fn new(accounts_base: A, meta_base: B, events_base: C, blocks_base: D) -> Self {
         Self {
@@ -66,6 +66,12 @@ where
         self.meta.commit_oldest();
         self.events.commit_oldest();
         self.blocks.commit_oldest();
+    }
+
+    pub fn clear_state_preserve_blocks(&mut self) {
+        self.accounts.clear_all();
+        self.meta.clear_all();
+        self.events.clear_all();
     }
 }
 
